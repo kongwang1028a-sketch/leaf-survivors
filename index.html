@@ -1136,6 +1136,7 @@ function choices(){
   const pool=Object.keys(SK).filter(k=>{
     const d=SK[k], l=P.sk[k]||0;
     if(d.t==='x'||d.t==='e'||l>=5)return false;
+    if(P.sk[k+'X'])return false; // 已進化的技能不再出現
     if(d.cls&&d.cls!==P.cls)return false;
     if(d.t==='b'&&!l)return false;
     if(!l&&d.t==='w'&&wN>=6)return false;
