@@ -231,13 +231,13 @@ const SK={
   clone:{t:'b',ic:'👥',nm:'影分身',ds:'分身跟在身邊一起擲飛刃，等級越高分身越多。'},
   mine:{t:'b',ic:'💣',nm:'地雷',ds:'沿路佈下地雷，怪物碰到就爆炸。'},
   str:{t:'p',ic:'💪',nm:'力量',ds:'所有傷害 +12%'},
-  agi:{t:'p',ic:'🪶',nm:'敏捷',ds:'技能冷卻 -7%'},
+  agi:{t:'p',ic:'💨',nm:'敏捷',ds:'技能冷卻 -7%'},
   vit:{t:'p',ic:'❤️',nm:'體力',ds:'最大 HP +20，並回復 20 HP'},
   luk:{t:'p',ic:'🍀',nm:'幸運',ds:'拾取範圍 +25%，爆擊率 +3%'},
   regen:{t:'p',ic:'💚',nm:'回復',ds:'每秒回復 0.4 HP'},
   spd:{t:'p',ic:'👟',nm:'移速',ds:'移動速度 +7%，衝刺冷卻 -8%'},
   heal:{t:'x',ic:'🍖',nm:'烤肉',ds:'回復 40 HP'},
-  gold:{t:'x',ic:'🪙',nm:'錢袋',ds:'金幣 +30'},
+  gold:{t:'x',ic:'💰',nm:'錢袋',ds:'金幣 +30'},
 };
 const WT={
   slash:{dmg:[14,17,21,26,32],cd:[.85,.8,.72,.65,.55],rng:[62,68,74,82,92]},
@@ -1426,7 +1426,7 @@ function drawHUD(){
   ctx.textAlign='center';ctx.font='900 20px '+FONT;ctx.lineWidth=4;ctx.strokeStyle='#4a2a10';
   ctx.strokeText(fmt(S.t),VW/2,28);ctx.fillStyle='#fff';ctx.fillText(fmt(S.t),VW/2,28);
   ctx.textAlign='right';ctx.font='bold 13px '+FONT;
-  const s=`💀 ${S.kills}   🪙 ${S.coins}`;ctx.strokeText(s,VW-54,26);ctx.fillStyle='#fff';ctx.fillText(s,VW-54,26);
+  const s=`💀 ${S.kills}   💰 ${S.coins}`;ctx.strokeText(s,VW-54,26);ctx.fillStyle='#fff';ctx.fillText(s,VW-54,26);
   ctx.fillStyle='rgba(40,25,10,.55)';rr(VW-42,8,32,30,8);ctx.fill();
   ctx.fillStyle='#fff';ctx.fillRect(VW-32,16,4,14);ctx.fillRect(VW-24,16,4,14);
   if(S.boss){
