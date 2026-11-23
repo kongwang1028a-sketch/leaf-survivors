@@ -44,6 +44,20 @@ h2{margin:2px 0 10px;font-size:24px;color:#d9631e}
 .stats{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:10px 0;font-size:15px}
 .stats div{background:#fff3da;border-radius:8px;padding:6px}
 .stats b{color:#d9631e}
+.btn.gold{background:linear-gradient(#ffd75a,#e8a317);box-shadow:0 4px 0 #9a6a00;color:#5a3200}
+.btn.small{font-size:14px;padding:7px 16px}
+.bank{font-size:18px;font-weight:800;margin:4px 0 10px}.bank b{color:#d9631e}
+.earn{font-size:14px;line-height:1.6;background:#fff3da;border-radius:10px;padding:8px 12px;margin:6px 0}.earn b{color:#d9631e}
+.shopgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px;margin:6px 0 10px;text-align:left}
+.up{background:#fffdf6;border:2px solid #f0b469;border-radius:12px;padding:8px 10px;display:flex;flex-direction:column;gap:3px}
+.up.max{border-color:#3fae4a;background:#f0fff0}.up.lock{opacity:.55}
+.up .t{font-weight:900;font-size:15px}.up .d{font-size:12px;color:#6a4a2a;line-height:1.4;flex:1}
+.up .pips{font-size:11px;letter-spacing:1px;color:#e8a317}
+.up button{font:inherit;font-weight:800;font-size:13px;border:none;border-radius:8px;padding:6px;color:#fff;background:linear-gradient(#ffb347,#f07a1a);cursor:pointer}
+.up button:disabled{background:#c8c0b0;cursor:default}
+.modes{display:flex;gap:8px;justify-content:center;margin:4px 0 8px;flex-wrap:wrap}
+.modes button{font:inherit;font-weight:800;border:2px solid #f0b469;border-radius:10px;padding:5px 12px;background:#fffdf6;color:#6a4a2a;cursor:pointer}
+.modes button.on{background:#f07a1a;color:#fff;border-color:#b8560f}.modes button:disabled{opacity:.45;cursor:default}
 .sklist{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:8px 0;font-size:13px}
 .sklist span{background:#fff3da;border-radius:8px;padding:3px 8px}
 #rot{z-index:50;background:#1a1426;color:#ffe9c4;flex-direction:column;font-size:18px;text-align:center}
@@ -65,12 +79,15 @@ h2{margin:2px 0 10px;font-size:24px;color:#d9631e}
       ⚔️ 先選職業，技能會自動施放。撿經驗球升級，每次升級三選一<br>
       🌟 <b>Lv.10 轉職</b>：每個職業有兩條路線，各有專屬技能<br>
       🐾 <b>野外 BOSS</b>：地圖上有 3 隻沉睡的 BOSS，靠近才會醒來；打倒後可以孵出寵物（撿東西、攻擊、補血）<br>
+      🏠 <b>大廳強化</b>：每局的金幣會存進金庫，可以永久強化角色；通關後解鎖困難模式<br>
       ✨ <b>技能進化</b>：一般技能升到 Lv.5 滿級後，下次升級可以合成更強的進化技能<br>
       👑 撐過 <b>3:00</b> 會出現 BOSS，打倒 <b>6:00</b> 出現的最終 BOSS 就通關。BOSS 跳起來時地上會出現紅圈，落地後的震波要用<b>衝刺穿過去</b>！<br>
       ⌨️ 電腦：WASD／方向鍵移動，空白鍵衝刺，P 暫停
     </div>
     <div id="bestTxt" class="sub"></div>
+    <div id="bankTxt" class="sub"></div>
     <button class="btn" id="startBtn">開始冒險</button>
+    <button class="btn gold" id="shopBtn">🏠 大廳強化</button>
     <button class="btn gray" id="fsBtn">全螢幕</button>
   </div>
 </div>
@@ -79,6 +96,7 @@ h2{margin:2px 0 10px;font-size:24px;color:#d9631e}
   <div class="panel" style="max-width:700px">
     <h2>✨ LEVEL UP!</h2>
     <div id="cards" class="cards"></div>
+    <button class="btn gray small" id="rerollBtn">🎲 重抽</button>
   </div>
 </div>
 
@@ -99,7 +117,9 @@ h2{margin:2px 0 10px;font-size:24px;color:#d9631e}
     <div class="stats" id="overStats"></div>
     <div id="overSk" class="sklist"></div>
     <div id="overBest" class="sub"></div>
+    <div id="overEarn" class="earn"></div>
     <button class="btn" id="againBtn">再玩一次</button>
+    <button class="btn gold" id="overShopBtn">🏠 大廳強化</button>
   </div>
 </div>
 
@@ -107,6 +127,7 @@ h2{margin:2px 0 10px;font-size:24px;color:#d9631e}
 <div id="cls" class="ov hide">
   <div class="panel" style="max-width:780px">
     <h2>選擇職業</h2>
+    <div class="modes" id="modeBox"></div>
     <div id="clsCards" class="cards"></div>
     <button class="btn gray" id="clsBack">返回</button>
   </div>
@@ -117,6 +138,17 @@ h2{margin:2px 0 10px;font-size:24px;color:#d9631e}
     <h2>🌟 轉職！選擇你的道路</h2>
     <div class="sub">已達 Lv.10，選一條路線（這局不能再更改）</div>
     <div id="advCards" class="cards"></div>
+  </div>
+</div>
+
+<div id="shop" class="ov hide">
+  <div class="panel" style="max-width:820px">
+    <h2>🏠 大廳：永久強化</h2>
+    <div class="sub">每局結束時，金幣和表現獎勵會存進金庫。強化效果在之後每一局都有效。</div>
+    <div class="bank">💰 金庫：<b id="shopBank">0</b></div>
+    <div id="shopGrid" class="shopgrid"></div>
+    <button class="btn" id="shopBack">返回</button>
+    <button class="btn gray small" id="shopReset">重置強化（全額退還）</button>
   </div>
 </div>
 
@@ -333,33 +365,58 @@ const PETS={
   sprout:{nm:'葉芽精靈',ic:'🌱',ds:'定時幫你補血'},
 };
 
+// ====== 局外養成 ======
+const UPG=[
+  {k:'hp',ic:'❤️',nm:'生命強化',ds:l=>`最大 HP +${l*10}`,max:5,base:60},
+  {k:'dmg',ic:'💪',nm:'力量強化',ds:l=>`所有傷害 +${l*5}%`,max:5,base:80},
+  {k:'cd',ic:'⏳',nm:'冷卻縮短',ds:l=>`技能冷卻 -${l*3}%`,max:5,base:90},
+  {k:'spd',ic:'👟',nm:'移動速度',ds:l=>`移動速度 +${l*4}%`,max:3,base:70},
+  {k:'pick',ic:'🔍',nm:'拾取範圍',ds:l=>`拾取範圍 +${l*15}%`,max:3,base:50},
+  {k:'regen',ic:'💚',nm:'自然回復',ds:l=>`每秒回復 ${(l*0.2).toFixed(1)} HP`,max:3,base:90},
+  {k:'exp',ic:'📘',nm:'經驗加成',ds:l=>`獲得經驗 +${l*8}%`,max:5,base:100},
+  {k:'gold',ic:'💰',nm:'金幣加成',ds:l=>`獲得金幣 +${l*10}%`,max:5,base:100},
+  {k:'reroll',ic:'🎲',nm:'重抽',ds:l=>`每局可重抽升級選項 ${l} 次`,max:3,base:120},
+  {k:'revive',ic:'👼',nm:'復活',ds:l=>l?'每局可復活 1 次（HP 回復一半）':'倒下時復活一次，HP 回復一半',max:1,base:600},
+  {k:'pet',ic:'🥚',nm:'寵物同行',ds:l=>l?'每局開局隨機獲得 1 隻寵物':'開局隨機獲得 1 隻寵物',max:1,base:500},
+];
+function upCost(u,l){return Math.round(u.base*Math.pow(l+1,1.6)/10)*10;}
+let META={bank:0,up:{},wins:0,hardWins:0,runs:0};
+try{const m=JSON.parse(localStorage.getItem('leafsurv_meta')||'null');if(m)META=Object.assign(META,m);}catch(e){}
+function saveMeta(){try{localStorage.setItem('leafsurv_meta',JSON.stringify(META));}catch(e){}}
+const ML=k=>META.up[k]||0;
+let HARD=false;
+
 // ====== 遊戲狀態 ======
 let S={mode:'title'}, P=null;
 function newGame(cls){
   const c=CLS[cls];
-  P={cls,br:null,x:MAPW/2,y:MAPH/2,fx:1,fy:0,face:1,hp:c.hp,maxHp:c.hp,inv:0,blink:0,lv:1,exp:0,need:needExp(1),swing:0,swingA:0,
+  const hp0=c.hp+ML('hp')*10;
+  P={cls,br:null,x:MAPW/2,y:MAPH/2,fx:1,fy:0,face:1,hp:hp0,maxHp:hp0,inv:0,blink:0,lv:1,exp:0,need:needExp(1),swing:0,swingA:0,
      dashT:0,dashCd:0,dashX:0,dashY:0,moving:false,shieldT:0,sk:{},cd:{},st:{}};
   P.sk[c.start]=1; P.cd[c.start]=0;
   recalc();
   S={mode:'play',t:0,enemies:[],projs:[],orbs:[],fx:[],nums:[],rings:[],zones:[],mines:[],pets:[],buddies:[],eprojs:[],hazards:[],fieldLeft:3,kills:0,coins:0,
-     camX:0,camY:0,spawnT:1,surgeT:75,bossPhase:0,boss:null,pendingLv:0,pendingAdv:false,orbA:0,auraT:0,shake:0,banner:null,winT:-1};
+     camX:0,camY:0,spawnT:1,surgeT:75,bossPhase:0,boss:null,pendingLv:0,pendingAdv:false,orbA:0,auraT:0,shake:0,banner:null,winT:-1,
+     hard:HARD,rerolls:ML('reroll'),revive:ML('revive'),earned:0};
   snapCam();
   for(const L of LAIRS){
     const b=spawnEnemy(L.type,L.x,L.y,{field:true,sleep:true,lair:L,state:'idle',act:2,nm:L.nm,ic:L.ic});
     b.fly=false;
   }
+  if(ML('pet'))givePet();
+  if(HARD)banner('🔥 困難模式：怪物更強，金幣 ×1.5');
 }
 function snapCam(){S.camX=clamp(P.x-VW/2,0,MAPW-VW);S.camY=clamp(P.y-VH/2,0,MAPH-VH);}
 function needExp(lv){return Math.floor(3+lv*2.2+Math.pow(lv,1.45));}
 function recalc(){
   const s=P.sk, c=P.cls, b=P.br;
-  P.st.dmg=(1+0.12*(s.str||0))*(b==='elem'?1.1:1);
-  P.st.cd=Math.pow(0.93,s.agi||0)*(c==='mage'?0.9:1)*(b==='star'?0.9:1);
-  P.st.pick=90*(1+0.25*(s.luk||0))*(b==='beast'?1.3:1);
+  P.st.dmg=(1+0.12*(s.str||0))*(b==='elem'?1.1:1)*(1+ML('dmg')*0.05);
+  P.st.cd=Math.pow(0.93,s.agi||0)*(c==='mage'?0.9:1)*(b==='star'?0.9:1)*(1-ML('cd')*0.03);
+  P.st.pick=90*(1+0.25*(s.luk||0))*(b==='beast'?1.3:1)*(1+ML('pick')*0.15);
   P.st.crit=0.08+0.03*(s.luk||0)+(c==='thief'?0.07:0)+(b==='sage'?0.1:0);
   P.st.critMul=b==='shadow'?2.1:1.8;
-  P.st.regen=0.4*(s.regen||0);
-  P.st.spd=(1+0.07*(s.spd||0))*(c==='archer'?1.1:1)*(b==='gale'?1.1:1);
+  P.st.regen=0.4*(s.regen||0)+ML('regen')*0.2;
+  P.st.spd=(1+0.07*(s.spd||0))*(c==='archer'?1.1:1)*(b==='gale'?1.1:1)*(1+ML('spd')*0.04);
   P.st.dashCd=1.2*Math.pow(0.92,s.spd||0)*(c==='thief'?0.6:1)*(b==='trap'?0.75:1);
   P.st.armor=(c==='warrior'?0.9:1)*(b==='guard'?0.85:1);
 }
@@ -478,10 +535,13 @@ function damageP(d){
   }
   d=Math.max(1,Math.round(d*P.st.armor)); P.hp-=d; P.inv=0.8; P.blink=0.8; S.shake=0.2; sfx.hurt();
   num(P.x,P.y-48,d,false,'#ff5a5a');
-  if(P.hp<=0){P.hp=0; puff(P.x,P.y-20,'#ffe0c2',30,200); endGame(false);}
+  if(P.hp<=0){
+    if(S.revive>0){S.revive--;P.hp=Math.round(P.maxHp*0.5);P.inv=2.5;P.blink=2.5;S.shake=0.4;
+      S.fx.push({type:'pillar',life:1.4,max:1.4});aoe(P.x,P.y,160,60,500);puff(P.x,P.y-20,'#fff2b0',40,240);banner('👼 復活！');sfx.adv();return;}
+    P.hp=0; puff(P.x,P.y-20,'#ffe0c2',30,200); endGame(false);}
 }
 function gainExp(v){
-  P.exp+=v;
+  P.exp+=v*(1+ML('exp')*0.08);
   while(P.exp>=P.need){P.exp-=P.need;P.lv++;P.need=needExp(P.lv);S.pendingLv++;
     S.fx.push({type:'pillar',life:.9,max:.9});
     if(P.lv>=ADV_LV&&!P.br)S.pendingAdv=true;}
@@ -750,10 +810,10 @@ function updateZones(dt){
 }
 
 // ====== 怪物 ======
-function hpMul(){return 1+S.t/60*0.35;}
+function hpMul(){return (1+S.t/60*0.35)*(S.hard?1.6:1);}
 function spawnEnemy(type,x,y,extra){
   const d=ET[type];
-  const e=Object.assign({type,x:clamp(x,20,MAPW-20),y:clamp(y,20,MAPH-20),hp:d.hp*(d.boss?1:hpMul()),dmg:d.dmg*(1+S.t/300),r:d.r,h:d.h,fly:!!d.fly,boss:!!d.boss,
+  const e=Object.assign({type,x:clamp(x,20,MAPW-20),y:clamp(y,20,MAPH-20),hp:d.hp*(d.boss?1:hpMul()),dmg:d.dmg*(1+S.t/300)*(S.hard?1.3:1),r:d.r,h:d.h,fly:!!d.fly,boss:!!d.boss,
     exp:d.exp,spd:d.spd*rand(0.8,1.2),flash:0,kbx:0,kby:0,orbT:0,slowT:0,phase:rand(0,6),face:1,anim:rand(0,6),z:0},extra||{});
   e.maxHp=e.hp;
   S.enemies.push(e); return e;
@@ -1058,7 +1118,7 @@ function updateBuddies(dt){
 }
 function collect(o){
   if(o.kind==='exp'){gainExp(o.v);sfx.pick();}
-  else if(o.kind==='coin'){S.coins+=o.v;tone(1500,0.06,'sine',0.03,200);}
+  else if(o.kind==='coin'){S.coins+=Math.round(o.v*(1+ML('gold')*0.1)*(S.hard?1.5:1));tone(1500,0.06,'sine',0.03,200);}
   else if(o.kind==='meat'){P.hp=Math.min(P.maxHp,P.hp+30);num(P.x,P.y-48,'+30',false,'#5be36b');}
   else if(o.kind==='egg'){givePet();}
   else if(o.kind==='chest'){S.pendingLv+=2;P.hp=P.maxHp;banner('寶箱：連續升級 ×2，HP 全滿！');sfx.lvl();}
@@ -1090,6 +1150,7 @@ function makeCard(o){
   b.onclick=o.onclick; return b;
 }
 function openClassSelect(){
+  renderModes();
   const box=$('clsCards'); box.innerHTML='';
   for(const k in CLS){const c=CLS[k];
     box.appendChild(makeCard({cv:[k,null],nm:c.ic+' '+c.nm,ds:c.ds,tag:'轉職：'+BR[k].map(b=>b.nm).join('／'),
@@ -1126,6 +1187,7 @@ function openLevelUp(){
     box.appendChild(makeCard({ic:d.ic,nm:d.nm,lv:d.t==='x'?'道具':(cur?`Lv.${cur} → ${cur+1}`:'新技能'),lvNew:!cur&&d.t!=='x',ds:d.ds,
       tag:d.t==='b'?'轉職技能':ev&&cur===4?`升滿後可進化成「${ev.nm}」`:'',onclick:()=>pickSkill(k)}));
   }
+  const rb=$('rerollBtn'); rb.textContent=`🎲 重抽（剩 ${S.rerolls} 次）`; rb.classList.toggle('hide',S.rerolls<=0);
   $('lvl').classList.remove('hide');
   sfx.lvl();
 }
@@ -1200,13 +1262,49 @@ function endGame(win){
   $('overStats').innerHTML=`<div>存活時間<br><b>${fmt(S.t)}</b></div><div>等級<br><b>Lv.${P.lv}</b></div><div>擊殺數<br><b>${S.kills}</b></div><div>金幣<br><b>${S.coins}</b></div>`;
   $('overSk').innerHTML=skillTags();
   $('overBest').textContent=nb?'✨ 新紀錄！':'';
+  const bk=Math.floor(S.kills/25), bt=Math.floor(S.t/10), bw=win?(S.hard?300:150):0;
+  const earn=Math.round((S.coins+bk+bt+bw)*(S.hard&&!win?1.2:1));
+  const first=win&&S.hard?!META.hardWins:win?!META.wins:false;
+  META.bank+=earn; META.runs++; if(win){META.wins++; if(S.hard)META.hardWins++;} saveMeta();
+  $('overEarn').innerHTML=`本局存入金庫：<b>+${earn}</b> 💰（金幣 ${S.coins}＋擊殺獎勵 ${bk}＋存活獎勵 ${bt}${bw?`＋通關獎勵 ${bw}`:''}）<br>金庫總計：<b>${META.bank}</b>`+
+    (first&&!S.hard?'<br>🔓 解鎖了<b>困難模式</b>！':'');
   setTimeout(()=>$('over').classList.remove('hide'),win?200:900);
+}
+// ====== 大廳 ======
+function showBank(){$('bankTxt').textContent=`💰 金庫：${META.bank}`+(META.wins?`・已通關 ${META.wins} 次`:'');}
+function openShop(){
+  ['title','over'].forEach(id=>$(id).classList.add('hide'));
+  $('shopBank').textContent=META.bank;
+  const g=$('shopGrid'); g.innerHTML='';
+  for(const u of UPG){
+    const l=ML(u.k), max=l>=u.max, cost=upCost(u,l);
+    const d=document.createElement('div'); d.className='up'+(max?' max':'');
+    d.innerHTML=`<div class="t">${u.ic} ${u.nm}</div><div class="pips">${'●'.repeat(l)}${'○'.repeat(u.max-l)}</div>`+
+      `<div class="d">${l?'目前：'+u.ds(l)+'<br>':''}${max?'已滿級':'下一級：'+u.ds(l+1)}</div>`;
+    const b=document.createElement('button');
+    b.textContent=max?'✔ 已滿級':`💰 ${cost}`; b.disabled=max||META.bank<cost;
+    b.onclick=()=>{if(META.bank<cost)return;META.bank-=cost;META.up[u.k]=l+1;saveMeta();sfx.lvl();openShop();};
+    d.appendChild(b); g.appendChild(d);
+  }
+  $('shop').classList.remove('hide');
+}
+function spentTotal(){let t=0;for(const u of UPG)for(let i=0;i<ML(u.k);i++)t+=upCost(u,i);return t;}
+$('shopBtn').onclick=()=>{initAudio();openShop();};
+$('overShopBtn').onclick=openShop;
+$('shopBack').onclick=()=>{$('shop').classList.add('hide');S.mode='title';showBest();showBank();$('title').classList.remove('hide');};
+$('shopReset').onclick=()=>{const t=spentTotal();if(!t)return;META.bank+=t;META.up={};saveMeta();openShop();};
+$('rerollBtn').onclick=()=>{if(S.rerolls<=0)return;S.rerolls--;tone(800,0.08,'triangle',0.04,300);openLevelUp();};
+function renderModes(){
+  const box=$('modeBox');
+  box.innerHTML=`<button id="mNormal" class="${HARD?'':'on'}">普通模式</button><button id="mHard" class="${HARD?'on':''}" ${META.wins?'':'disabled'}>🔥 困難模式${META.wins?'（金幣 ×1.5）':'（通關一次解鎖）'}</button>`;
+  $('mNormal').onclick=()=>{HARD=false;renderModes();};
+  $('mHard').onclick=()=>{if(META.wins){HARD=true;renderModes();}};
 }
 $('startBtn').onclick=()=>{initAudio();openClassSelect();};
 $('clsBack').onclick=()=>{$('cls').classList.add('hide');$('title').classList.remove('hide');};
 $('againBtn').onclick=()=>{$('over').classList.add('hide');openClassSelect();};
 $('resumeBtn').onclick=closePause;
-$('quitBtn').onclick=()=>{$('pause').classList.add('hide');S.mode='title';showBest();$('title').classList.remove('hide');};
+$('quitBtn').onclick=()=>{$('pause').classList.add('hide');S.mode='title';showBest();showBank();$('title').classList.remove('hide');};
 $('muteBtn').onclick=()=>{muted=!muted;$('muteBtn').textContent='音效：'+(muted?'關':'開');};
 $('fsBtn').onclick=()=>{
   const el=document.documentElement;
@@ -2029,7 +2127,7 @@ $('qBtn').onclick=()=>{QUAL=QUAL===0?2:QUAL-1;autoQ=false;try{localStorage.setIt
 updQBtn();buildGround(2);
 addEventListener('resize',resize);
 addEventListener('orientationchange',()=>setTimeout(resize,200));
-resize();showBest();
+resize();showBest();showBank();
 requestAnimationFrame(loop);
 </script>
 </body>
